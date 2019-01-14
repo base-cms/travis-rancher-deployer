@@ -1,0 +1,19 @@
+{
+  "name": "travis-rancher-deployer",
+  "version": "1.0.0",
+  "description": "A project to automate deployments to a Rancher 1.6 private cloud via TravisCI",
+  "main": "src/index.js",
+  "repository": "https://github.com/base-cms/travis-rancher-deployer",
+  "author": "Josh Worden <josh@limit0.io>",
+  "license": "MIT",
+  "dependencies": {
+    "envalid": "^4.1.4",
+    "node-fetch": "^2.3.0",
+    "object-path": "^0.11.4",
+    "retry": "^0.12.0",
+    "validator": "^10.9.0"
+  },
+  "scripts": {
+    "start": "node src/index.js"
+  }
+}
