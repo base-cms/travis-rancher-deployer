@@ -21,7 +21,4 @@ module.exports = cleanEnv(process.env, {
   RANCHER_URI: url(),
   RANCHER_ACCESS_KEY: nonemptystr(),
   RANCHER_SECRET_KEY: nonemptystr(),
-  SERVICE_TARGET: nonemptystr({ desc: 'The service label value to search for' }),
-  IMAGE_NAME: nonemptystr({ desc: 'The image to deploy' }),
-  TRAVIS_TAG: nonemptystr({ desc: 'The version to deploy' }),
 });

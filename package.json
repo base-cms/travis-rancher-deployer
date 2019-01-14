@@ -1,6 +1,6 @@
 {
   "name": "@base-cms/travis-rancher-deployer",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A project to automate deployments to a Rancher 1.6 private cloud via TravisCI",
   "main": "src/index.js",
   "repository": "https://github.com/base-cms/travis-rancher-deployer",
@@ -11,9 +11,10 @@
     "node-fetch": "^2.3.0",
     "object-path": "^0.11.4",
     "retry": "^0.12.0",
-    "validator": "^10.9.0"
+    "validator": "^10.9.0",
+    "yargs": "^12.0.5"
   },
-  "scripts": {
-    "start": "node src/index.js"
+  "bin": {
+    "deploy-to-rancher": "./src/index.js"
   }
 }

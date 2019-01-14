@@ -1,14 +1,10 @@
+#!/usr/bin/env node
+
 const Rancher = require('./rancher');
 const pkg = require('../package.json');
 
-const {
-  RANCHER_URI,
-  RANCHER_ACCESS_KEY,
-  RANCHER_SECRET_KEY,
-  SERVICE_TARGET,
-  IMAGE_NAME,
-  TRAVIS_TAG,
-} = require('./env');
+// Arguments
+const { RANCHER_URI, RANCHER_ACCESS_KEY, RANCHER_SECRET_KEY } = require('./env.js')
 
 const { log } = console;
 
@@ -18,27 +14,43 @@ const api = new Rancher({
   secretKey: RANCHER_SECRET_KEY,
 });
 
-const doUpgrade = async service => api.upgradeService({
-  service,
-  finish: true,
-  image: `${IMAGE_NAME}:${TRAVIS_TAG}`,
-});
+// Command logic
+require('yargs').command(
+  '$0 <image> <service>',
+  'Deploy to Rancher',
+  (yargs) => {
+    yargs.positional('image', {
+      describe: 'Docker image to deploy',
+      type: 'string',
+      demand: true,
+    }).positional('service', {
+      describe: 'The `service=X` label to target',
+      type: 'string',
+      demand: true,
+    }).option('finish', {
+      describe: 'Automatically finish upgrades when complete',
+      type: 'boolean',
+      default: true,
+    })
+  },
+  async ({ service, image, finish }) => {
+    log(`> Finding services with label "service=${service}"`);
+    const services = await api.findServicesByTag({ service });
 
-const run = async () => {
-  log(`> Finding services with label "service=${SERVICE_TARGET}"`);
-  const services = await api.findServicesByTag({ service: SERVICE_TARGET });
-
-  log(`> Found ${services.length} services to upgrade.`);
-  log('> Starting service upgrades.');
-  await Promise.all(services.map(service => doUpgrade(service)))
-    .then(() => log('> Upgrades complete.'));
-  log('> Run completed.\n');
-};
+    log(`> Found ${services.length} services to upgrade.`);
+    if (services.length) {
+      log('> Starting service upgrades.');
+      await Promise.all(services.map(service => api.upgradeService({ service, image, finish })))
+        .then(() => log('> Upgrades complete.'));
+    }
+    log('> Run completed.\n');
+  })
+  .demandOption(['image', 'service'])
+  .example('$0 myorg/my-image:v1 my-cool-service', 'Upgrade services tagged as `service=my-cool-service` using the image `myorg/my-image:v1`')
+  .help()
+  .argv;
 
 process.on('unhandledRejection', (e) => {
   log('> Unhandled promise rejection. Throwing error...');
   throw e;
 });
-
-log(`> Booting ${pkg.name} v${pkg.version}...\n`);
-run().catch(e => setImmediate(() => { throw e; }));
