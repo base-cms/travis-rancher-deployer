@@ -1,6 +1,6 @@
 {
   "name": "@base-cms/travis-rancher-deployer",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A project to automate deployments to a Rancher 1.6 private cloud via TravisCI",
   "main": "src/index.js",
   "repository": "https://github.com/base-cms/travis-rancher-deployer",
