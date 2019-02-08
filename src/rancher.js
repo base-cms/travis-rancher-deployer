@@ -43,6 +43,7 @@ class Rancher {
   async upgradeService({
     service,
     image,
+    batchSize,
     finish = false,
     startFirst = true,
   }) {
@@ -52,7 +53,7 @@ class Rancher {
     launchConfig.imageUuid = `docker:${image}`;
     const body = JSON.stringify({
       inServiceStrategy: {
-        batchSize: 1,
+        batchSize,
         intervalMillis: 2000,
         startFirst,
         launchConfig,

@@ -31,16 +31,20 @@ require('yargs').command(
       describe: 'Automatically finish upgrades when complete',
       type: 'boolean',
       default: true,
+    }).option('batchSize', {
+      describe: 'The number of containers that you want stopped from the old service and started from the new service at one time.',
+      type: 'int',
+      default: 1,
     })
   },
-  async ({ service, image, finish }) => {
+  async ({ service, image, finish, batchSize }) => {
     log(`> Finding services with label "service=${service}"`);
     const services = await api.findServicesByTag({ service });
 
     log(`> Found ${services.length} services to upgrade.`);
     if (services.length) {
       log('> Starting service upgrades.');
-      await Promise.all(services.map(service => api.upgradeService({ service, image, finish })))
+      await Promise.all(services.map(service => api.upgradeService({ service, image, finish, batchSize })))
         .then(() => log('> Upgrades complete.'));
     }
     log('> Run completed.\n');
